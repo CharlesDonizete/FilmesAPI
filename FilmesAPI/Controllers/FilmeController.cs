@@ -18,13 +18,19 @@ namespace FilmesAPI.Controllers
         public void AdicionaFilme([FromBody] Filme filme)
         {
             filme.Id = id++;
-            filmes.Add(filme);            
+            filmes.Add(filme);
         }
 
         [HttpGet]
-        public IEnumerable<Filme> RecuperarFilmes()
+        public IEnumerable<Filme> RecuperaFilmes()
         {
             return filmes;
+        }
+
+        [HttpGet("{id}")]
+        public Filme RecuperarFilmesPorId(int id)
+        {
+            return filmes.FirstOrDefault(filme => filme.Id == id);            
         }
     }
 }
