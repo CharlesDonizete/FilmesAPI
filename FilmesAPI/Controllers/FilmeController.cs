@@ -21,16 +21,16 @@ namespace FilmesAPI.Controllers
             filmes.Add(filme);
         }
 
+        [HttpGet("{id}")]
+        public Filme RecuperarFilmesPorId(int id)
+        {
+            return filmes.FirstOrDefault(filme => filme.Id == id);
+        }
+
         [HttpGet]
         public IEnumerable<Filme> RecuperaFilmes()
         {
             return filmes;
-        }
-
-        [HttpGet("{id}")]
-        public Filme RecuperarFilmesPorId(int id)
-        {
-            return filmes.FirstOrDefault(filme => filme.Id == id);            
-        }
+        }        
     }
 }
