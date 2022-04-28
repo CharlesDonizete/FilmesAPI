@@ -8,6 +8,7 @@ namespace FilmesAPI.Data.Dtos
 {
     public class UpdateFilmeDto
     {
+        [Required(ErrorMessage = "O campo título é obrigatório")]
         public string Titulo { get; set; }
         [Required(ErrorMessage = "O campo diretor é obrigatório")]
         public string Diretor { get; set; }
