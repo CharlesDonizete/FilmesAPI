@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FilmesAPI.Data;
-using FilmesAPI.Data.Dtos.Gerente;
+using FilmesAPI.Data.Dtos;
 using FilmesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,14 +23,16 @@ namespace FilmesAPI.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost]
         public IActionResult AdicionaGerente(CreateGerenteDto dto)
         {
             Gerente gerente = _mapper.Map<Gerente>(dto);
             _context.Gerentes.Add(gerente);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperarGerentesPorId), new { Id = gerente.Id }, dto);
+            return CreatedAtAction(nameof(RecuperarGerentesPorId), new { Id = gerente.Id }, gerente);
         }
 
+        [HttpGet("{id}")]
         public IActionResult RecuperarGerentesPorId(int id)
         {
             Gerente gerente = _context.Gerentes.FirstOrDefault(gerente => gerente.Id == id);
@@ -41,6 +43,19 @@ namespace FilmesAPI.Controllers
                 return Ok(gerenteDto);
             }
             return NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletaGerente(int id)
+        {
+            Gerente gerente = _context.Gerentes.FirstOrDefault(gerente => gerente.Id == id);
+            if (gerente == null)
+            {
+                return NotFound();
+            }
+            _context.Remove(gerente);
+            _context.SaveChanges();
+            return NoContent();
         }
     }
 }
