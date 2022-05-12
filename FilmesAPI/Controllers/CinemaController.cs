@@ -29,20 +29,33 @@ namespace FilmesAPI.Controllers
 
             _context.Cinemas.Add(cinema);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperarCinemasPorId), new {Id = cinema.Id }, cinemaDto);
-        }        
+            return CreatedAtAction(nameof(RecuperarCinemasPorId), new { Id = cinema.Id }, cinemaDto);
+        }
 
         [HttpGet]
-        public IEnumerable<Cinema> RecuperaCinemas()
-        {            
-            return _context.Cinemas;
+        public IActionResult RecuperaCinemas([FromQuery] string nomeDoFilme)
+        {
+            List<Cinema> cinemas = _context.Cinemas.ToList();
+            if(cinemas == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(nomeDoFilme))
+            {
+                IEnumerable<Cinema> query = from cinema in cinemas where cinema.Sessoes.Any(sessao => sessao.Filme.Titulo == nomeDoFilme) select cinema;
+                cinemas = query.ToList();
+            }
+            List<ReadCinemaDto> readCinemaDtos = _mapper.Map<List<ReadCinemaDto>>(cinemas);
+
+            return Ok(readCinemaDtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperarCinemasPorId(int id)
         {
             Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if(cinema != null)
+            if (cinema != null)
             {
                 ReadCinemaDto cinemaDto = _mapper.Map<ReadCinemaDto>(cinema);
 
@@ -55,12 +68,12 @@ namespace FilmesAPI.Controllers
         public IActionResult AtualizaCinema(int id, [FromBody] UpdateCinemaDto cinemaDto)
         {
             Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if(cinema == null)
+            if (cinema == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map(cinemaDto, cinema);            
+            _mapper.Map(cinemaDto, cinema);
             _context.SaveChanges();
             return NoContent();
         }

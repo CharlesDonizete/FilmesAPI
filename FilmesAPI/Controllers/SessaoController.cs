@@ -18,13 +18,7 @@ namespace FilmesAPI.Controllers
         private IMapper _mapper;
 
         public SessaoController(AppDbContext context, IMapper mapper)
-        => (_context, _mapper) = (context, mapper);        
-
-        //public SessaoController(AppDbContext context, IMapper mapper)
-        //{
-        //    _context = context;
-        //    _mapper = mapper;
-        //}
+        => (_context, _mapper) = (context, mapper);
 
         [HttpPost]
         public IActionResult AdicionaSessao(CreateSessaoDto dto)
