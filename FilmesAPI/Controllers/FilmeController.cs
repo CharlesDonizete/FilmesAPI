@@ -29,20 +29,37 @@ namespace FilmesAPI.Controllers
 
             _context.Filmes.Add(filme);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperarFilmesPorId), new {Id = filme.Id }, filmeDto);
-        }        
+            return CreatedAtAction(nameof(RecuperarFilmesPorId), new { Id = filme.Id }, filmeDto);
+        }
 
         [HttpGet]
-        public IEnumerable<Filme> RecuperaFilmes()
-        {            
-            return _context.Filmes;
+        public IActionResult RecuperaFilmes([FromQuery] int? classificacaoEtaria = null)
+        {
+            List<Filme> filmes;
+
+            if (classificacaoEtaria == null)
+            {
+                filmes = _context.Filmes.ToList();
+            }
+            else
+            {
+                filmes = _context.Filmes.Where(filme => filme.ClassificacaoEtaria <= classificacaoEtaria).ToList();
+            }
+           
+            if(filmes != null)
+            {
+                List<ReadFilmeDto> readFilmeDtos = _mapper.Map<List<ReadFilmeDto>>(filmes);
+                return Ok(readFilmeDtos);
+            }
+
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperarFilmesPorId(int id)
         {
             Filme filme = _context.Filmes.FirstOrDefault(filme => filme.Id == id);
-            if(filme != null)
+            if (filme != null)
             {
                 ReadFilmeDto filmeDto = _mapper.Map<ReadFilmeDto>(filme);
 
@@ -55,12 +72,12 @@ namespace FilmesAPI.Controllers
         public IActionResult AtualizaFilme(int id, [FromBody] UpdateFilmeDto filmeDto)
         {
             Filme filme = _context.Filmes.FirstOrDefault(filme => filme.Id == id);
-            if(filme == null)
+            if (filme == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map(filmeDto, filme);            
+            _mapper.Map(filmeDto, filme);
             _context.SaveChanges();
             return NoContent();
         }
