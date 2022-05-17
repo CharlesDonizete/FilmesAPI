@@ -38,6 +38,14 @@ namespace UsuariosApi
             services.AddScoped<CadastroService, CadastroService>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //Se quiser fazer alteração das configurações de senha.
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireUppercase = false;
+            //    options.Password.RequiredLength = 8;
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
