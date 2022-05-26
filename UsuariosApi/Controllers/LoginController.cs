@@ -9,8 +9,9 @@ using UsuariosApi.Services;
 
 namespace UsuariosApi.Controllers
 {
-    [Route("[controller]")]
+    
     [ApiController]
+    [Route("[controller]")]
     public class LoginController : ControllerBase
     {
         private LoginService _loginService;
@@ -24,9 +25,8 @@ namespace UsuariosApi.Controllers
         public IActionResult LogaUsuario(LoginRequest request)
         {
             Result resultado = _loginService.LogaUsuario(request);
-            if (resultado.IsFailed) return Unauthorized();
-            return Ok();
-
+            if (resultado.IsFailed) return Unauthorized(resultado.Errors);
+            return Ok(resultado.Successes.FirstOrDefault());
         }
     }
 }

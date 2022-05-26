@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UsuariosApi.Data.Requests;
+using UsuariosApi.Models;
 
 namespace UsuariosApi.Services
 {
@@ -24,10 +25,17 @@ namespace UsuariosApi.Services
             var resultadoIdentity = _signInManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
             if (resultadoIdentity.Result.Succeeded)
             {
-                //_tokenService.CreateToken()
-                return Result.Ok();
+                var identityUser = _signInManager
+                    .UserManager
+                    .Users
+                    .FirstOrDefault(usuario =>
+                    usuario.NormalizedUserName == request.UserName.ToUpper());
+
+                Token token = _tokenService.CreateToken(identityUser);
+
+                return Result.Ok().WithSuccess(token.Value);
             }
-                
+
             return Result.Fail("Login falhou");
         }
     }
